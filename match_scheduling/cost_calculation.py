@@ -23,7 +23,7 @@ def cost(schedule: MatchSchedule) -> float:
         correct_num_matches = has_correct_num_matches(IDEAL_NUM_MATCHES, team, schedule.matches)
         cost_list = [x(team, schedule.matches) for x in TEAM_MATCH_FUNCS]
         cost_list.insert(0, correct_num_matches)
-        total_cost += sum([x*y for x, y in zip(cost_list, WEIGHTS)])
+        total_cost += sum(x*y for x, y in zip(cost_list, WEIGHTS))
     return total_cost
 
 
