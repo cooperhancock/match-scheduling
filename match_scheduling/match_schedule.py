@@ -1,4 +1,5 @@
 from typing import Callable, TypeVar, List, NamedTuple, Tuple
+from dataclasses import dataclass
 from functools import wraps
 
 T = TypeVar('T')
@@ -48,4 +49,7 @@ class Match(NamedTuple):
             return 3
 
 
-MatchSchedule = List[Match]
+@dataclass
+class MatchSchedule:
+    teams: List[int]
+    matches: List[Match]
