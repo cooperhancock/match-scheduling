@@ -1,4 +1,5 @@
-from typing import Callable, TypeVar, List, NamedTuple, Tuple
+from random import randint, shuffle
+from typing import Callable, Counter, TypeVar, List, NamedTuple, Tuple
 from dataclasses import dataclass
 from functools import wraps
 
@@ -53,3 +54,23 @@ class Match(NamedTuple):
 class MatchSchedule:
     teams: List[int]
     matches: List[Match]
+
+def generateRandomSchedule(teams: List[int], numMatchesPerTeam: int) -> MatchSchedule:
+    schedule = MatchSchedule(teams, [])
+    if len(teams) < 6:
+        raise ValueError(teams, 'must have at least 6 teams') 
+    counter = {x: 0 for x in teams}
+    # iterate through teams exploded until 6 unique teams are found, pop them from list and make into Match
+    while(min(counter.values()) < numMatchesPerTeam):
+        matchTeams: List[int] = []
+        # grab first 6 unique teams
+        while len(matchTeams) < 6:
+            team = teams[randint(0, len(teams)-1)]
+            if team in matchTeams:
+                continue
+            else:
+                matchTeams.append(team)
+                counter[team] += 1
+        # make match out of teams and add to schedule
+        schedule.matches.append(Match(matchTeams[0], matchTeams[1], matchTeams[2], matchTeams[3], matchTeams[4], matchTeams[5]))
+    return schedule
