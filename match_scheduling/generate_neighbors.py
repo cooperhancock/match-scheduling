@@ -30,6 +30,8 @@ def swap_teams_inside_matches(match_schedule: MatchSchedule) -> Iterable[MatchSc
 
     for i, match_i in enumerate(match_schedule.matches):
         for new_match_i in shuffle_teams_inside_match(match_i):
+            if new_match_i == match_i:
+                continue
             new_matches = [
                 *match_schedule.matches[:i],
                 new_match_i,
