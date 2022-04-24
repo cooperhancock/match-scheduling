@@ -15,7 +15,7 @@ def has_correct_num_matches(ideal_num_matches: int, team: int, match_schedule: L
 def spaces_between_matches(team: int, match_schedule: List[Match]) -> float:
     match_numbers = [i for i, match in enumerate(match_schedule) if team in match]
     spacings = [snd - fst for fst, snd in zip(match_numbers[:-1], match_numbers[1:])]
-    return statistics.median(spacings)
+    return min(spacings)
 
 
 def num_repeated_allied_team(team: int, match_schedule: List[Match]) -> float:
