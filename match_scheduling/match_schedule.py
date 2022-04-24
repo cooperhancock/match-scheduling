@@ -22,6 +22,10 @@ class Match(NamedTuple):
     blue2: int
     blue3: int
 
+    def is_valid(self) -> bool:
+        # all teams in the match are unique
+        return len(set(self)) == 6
+
     @must_contain_team
     def allies_of(self, team: int) -> Tuple[int, ...]:
         if team in self[:3]:
