@@ -10,8 +10,9 @@ import math
 import random
 
 def simulated_annealing(team_numbers: List[int], num_matches_per_team: int = 8) -> MatchSchedule:
-    temperature = 1.0  # TODO: figure out starting value
-    decay = 0.99
+    temperature = 100.0  # TODO: figure out starting value
+    decay = 0.9999
+    iterations = 20_000
 
     cost: Callable[[MatchSchedule], float] = functools.partial(cost_based_on_num_matches, ideal_num_matches=num_matches_per_team)
 
@@ -23,7 +24,11 @@ def simulated_annealing(team_numbers: List[int], num_matches_per_team: int = 8) 
     current_cost = cost(current_schedule)
 
     try:
-        for i in range(20_000):
+        for i in range(iterations):
+            if i == iterations/2:
+                temperature /= 2
+            if i == 3*iterations/4:
+                temperature /= 4
             start = time.perf_counter()
             # TODO: come up with way to break out of loop once a good
             # enough schedule is reached
