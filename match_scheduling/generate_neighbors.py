@@ -1,6 +1,6 @@
 import itertools
 import random
-from typing import Any, Iterable, Protocol
+from typing import Any, Iterable, List, Protocol
 from match_scheduling.match_schedule import Match, MatchSchedule
 
 
@@ -67,12 +67,22 @@ def swap_team_with_one_in_adjacent_match(
     ):
         # make a swap from match i with match j
         for t1_idx, t1 in enumerate(match_i):
-            for t2_idx, t2 in enumerate(match_j[t1_idx + 1:], start=t1_idx + 1):
-                new_match_i = Match(*(*match_i[:t1_idx], t2, *match_i[t1_idx + 1:]))
-                new_match_j = Match(*(*match_j[:t2_idx], t1, *match_j[t2_idx + 1:]))
+            if t1 not in match_j:
+                for t2_idx, t2 in enumerate(match_j[t1_idx + 1:], start=t1_idx + 1):
+                    if t2 not in match_i:
+                        new_match_i = Match(*(*match_i[:t1_idx], t2, *match_i[t1_idx + 1:]))
+                        new_match_j = Match(*(*match_j[:t2_idx], t1, *match_j[t2_idx + 1:]))
 
-                new_match_schedule = [
-                    *match_schedule.matches[:i], new_match_i, new_match_j, *match_schedule.matches[j+1:]
-                ]
+                        new_match_schedule = [
+                            *match_schedule.matches[:i], new_match_i, new_match_j, *match_schedule.matches[j+1:]
+                        ]
 
-                yield MatchSchedule(teams=match_schedule.teams, matches=new_match_schedule)
+                        yield MatchSchedule(teams=match_schedule.teams, matches=new_match_schedule)
+
+PERMUTERS: List[Permuter] = [
+    swap_two_matches,
+    swap_teams_inside_matches,
+    add_match_to_schedule,
+    delete_match_from_schedule,
+    swap_team_with_one_in_adjacent_match
+]

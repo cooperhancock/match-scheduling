@@ -10,7 +10,7 @@ def has_correct_num_matches(ideal_num_matches: int, team: int, match_schedule: L
     match_count = sum(1 for match in match_schedule if team in match)
     if match_count < ideal_num_matches:
         return float('inf')
-    return ideal_num_matches - match_count # penalize the use of surrogate matches
+    return match_count - ideal_num_matches # penalize the use of surrogate matches
 
 def spaces_between_matches(team: int, match_schedule: List[Match]) -> float:
     match_numbers = [i for i, match in enumerate(match_schedule) if team in match]
@@ -30,21 +30,19 @@ def num_repeated_allied_team(team: int, match_schedule: List[Match]) -> float:
 
 
 def num_repeated_opposing_team(team: int,  match_schedule: List[Match]) -> float:
+    """the max number of times we see a unique opposing team"""
     opposing_team_counter: Dict[int, int] = defaultdict(lambda: 0)
     for match in match_schedule:
         if team in match:
             for opponent in match.opponents_of(team):
                 opposing_team_counter[opponent] += 1
-    
-
-    opposing_team_counter.pop(team)
     return max(opposing_team_counter.values())
 
 
 def red_vs_blue_matches(team: int, match_schedule: List[Match]) -> float:
-    return sum(
-        1 if match.on_red(team) else -1 for match in match_schedule
-    )
+    return abs(sum(
+        1 if match.on_red(team) else -1 for match in match_schedule if team in match
+    ))
 
 def alliance_station_evenness(team: int, match_schedule: List[Match]) -> float:
     num = Counter(match.alliance_station_num(team) for match in match_schedule if team in match)

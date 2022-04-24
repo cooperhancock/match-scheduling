@@ -59,7 +59,19 @@ class MatchSchedule:
     teams: List[int]
     matches: List[Match]
 
-def generateRandomSchedule(teams: List[int], numMatchesPerTeam: int) -> MatchSchedule:
+    def format_pretty(self) -> str:
+        ret: List[str] = []
+        table_row_fstr = (
+            "{0!s:3} || {1!s:5} | {2!s:5} | {3!s:5} || {4!s:5} | {5!s:5} | {6!s:5} |"
+        )
+        ret.append(table_row_fstr.format("match_num", "red1", "red2", "red3", "blue1", "blue2", "blue3"))
+        for i, match in enumerate(self.matches):
+            ret.append(table_row_fstr.format(i, *match))
+
+        return "\n".join(ret)
+
+
+def generate_random_schedule(teams: List[int], numMatchesPerTeam: int) -> MatchSchedule:
     schedule = MatchSchedule(teams, [])
     if len(teams) < 6:
         raise ValueError(teams, 'must have at least 6 teams') 
