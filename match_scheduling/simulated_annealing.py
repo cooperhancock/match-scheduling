@@ -22,29 +22,35 @@ def simulated_annealing(team_numbers: List[int], num_matches_per_team: int = 8) 
     current_schedule = generate_random_schedule(team_numbers, num_matches_per_team)
     current_cost = cost(current_schedule)
 
-    for i in range(10_000):
-        start = time.perf_counter()
-        # TODO: come up with way to break out of loop once a good
-        # enough schedule is reached
+    try:
+        for i in range(20_000):
+            start = time.perf_counter()
+            # TODO: come up with way to break out of loop once a good
+            # enough schedule is reached
 
-        neighbors: List[MatchSchedule] = []
-        for permuter in PERMUTERS:
-            neighbors.extend(permuter(current_schedule))
-        
-        next_potential_neighbor = random.choice(neighbors)
-        next_potential_cost = cost(next_potential_neighbor)
+            neighbors: List[MatchSchedule] = []
+            for permuter in PERMUTERS:
+                neighbors.extend(permuter(current_schedule))
+            
+            next_potential_neighbor = random.choice(neighbors)
+            next_potential_cost = cost(next_potential_neighbor)
 
-        if next_potential_cost < current_cost:
-            current_schedule = next_potential_neighbor
-            current_cost = next_potential_cost
-        else:
-            threshold = math.exp(- (next_potential_cost - current_cost) / temperature)
-            if random.random() < threshold:
+            if next_potential_cost < current_cost:
                 current_schedule = next_potential_neighbor
                 current_cost = next_potential_cost
-                
-                temperature *= decay
-        end = time.perf_counter()
-        print(f"i {i} - time: {end - start} - cost: {current_cost} - temp: {temperature} - num matches in schedule {len(current_schedule.matches)}")
+            elif not math.isinf(next_potential_cost):
+                threshold = math.exp(- (next_potential_cost - current_cost) / temperature)
+                if random.random() < threshold:
+                    current_schedule = next_potential_neighbor
+                    current_cost = next_potential_cost
+                    
+                    temperature *= decay
+            end = time.perf_counter()
+
+            if i % 10 == 0:
+                print(f"i {i} - time: {end - start} - cost: {current_cost} - temp: {temperature} - num matches in schedule {len(current_schedule.matches)}")
+    except KeyboardInterrupt:
+        print(current_schedule.format_pretty())
+        raise
 
     return current_schedule
