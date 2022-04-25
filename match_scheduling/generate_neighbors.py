@@ -82,7 +82,7 @@ def swap_team_with_one_in_adjacent_match(
 PERMUTERS: List[Permuter] = [
     swap_two_matches,
     swap_teams_inside_matches,
-    add_match_to_schedule,
-    delete_match_from_schedule,
+    # add_match_to_schedule,
+    # delete_match_from_schedule,
     swap_team_with_one_in_adjacent_match
 ]

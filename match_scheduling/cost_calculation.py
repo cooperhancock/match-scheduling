@@ -17,7 +17,7 @@ team_cost_funcs: Callable[[int], List[Callable[[int, List[Match]], float]]] = la
 ]
 
 # weights for each of the 6 functions in constraints.py in order of the functions
-WEIGHTS = [100.0, 80.0, 7.0, 7.0, 5.0, 1.0]
+WEIGHTS = [10.0, 180.0, 7.0, 7.0, 5.0, 1.0]
 
 # takes a schedule and returns its cost
 def cost(schedule: MatchSchedule, ideal_num_matches: int) -> float:

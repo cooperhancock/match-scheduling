@@ -1,3 +1,4 @@
+from nis import match
 from random import randint, shuffle
 from typing import Callable, Counter, TypeVar, List, NamedTuple, Tuple
 from dataclasses import dataclass
@@ -90,3 +91,23 @@ def generate_random_schedule(teams: List[int], numMatchesPerTeam: int) -> MatchS
         # make match out of teams and add to schedule
         schedule.matches.append(Match(matchTeams[0], matchTeams[1], matchTeams[2], matchTeams[3], matchTeams[4], matchTeams[5]))
     return schedule
+
+def generate_even_spaced_schedule(teams: List[int], numMatchesPerTeam: int) -> MatchSchedule:
+    schedule = MatchSchedule(teams, [])
+    if len(teams) < 6:
+        raise ValueError(teams, 'must have at least 6 teams')
+    matchTeams: List[int] = [] 
+    i = 0
+    while True:
+        matchTeams.append(teams[i])
+        if len(matchTeams) == 6:
+            schedule.matches.append(Match(matchTeams[0], matchTeams[1], matchTeams[2], matchTeams[3], matchTeams[4], matchTeams[5]))
+            matchTeams = []
+        if i == len(teams)-1:
+            i = -1
+        if len(schedule.matches) > len(teams) * numMatchesPerTeam // 6:
+            break
+        i+=1
+    return schedule
+    
+
