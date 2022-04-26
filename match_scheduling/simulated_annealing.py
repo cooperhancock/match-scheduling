@@ -12,7 +12,7 @@ import random
 
 def simulated_annealing(team_numbers: List[int], num_matches_per_team: int = 8) -> MatchSchedule:
     temperature = 100.0  # TODO: figure out starting value
-    decay = 0.9999
+    decay = 0.999
     iterations = 20_000
 
     cost: Callable[[MatchSchedule], float] = functools.partial(cost_based_on_num_matches, ideal_num_matches=num_matches_per_team)
@@ -57,7 +57,9 @@ def simulated_annealing(team_numbers: List[int], num_matches_per_team: int = 8) 
     except KeyboardInterrupt:
         print(current_schedule.format_pretty())
         for team in current_schedule.teams:
-            print('team', team, ':', spaces_between_matches(team, current_schedule.matches))
+            match_numbers = [i for i, match in enumerate(current_schedule.matches) if team in match]
+            spacings = [snd - fst for fst, snd in zip(match_numbers[:-1], match_numbers[1:])]
+            print('team', team, ':', sorted(spacings))
         raise
 
     return current_schedule

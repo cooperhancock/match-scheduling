@@ -7,4 +7,6 @@ num_matches = 6
 out_schedule = simulated_annealing(teams, num_matches)
 print(out_schedule.format_pretty())
 for team in out_schedule.teams:
-            print('team', team, ':', spaces_between_matches(team, out_schedule.matches))
+    match_numbers = [i for i, match in enumerate(out_schedule.matches) if team in match]
+    spacings = [snd - fst for fst, snd in zip(match_numbers[:-1], match_numbers[1:])]
+    print('team', team, ':', sorted(spacings))

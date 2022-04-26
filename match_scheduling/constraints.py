@@ -18,7 +18,7 @@ def spaces_between_matches(team: int, match_schedule: List[Match]) -> float:
     if min(spacings) == 1:
         return float('inf')
     else:
-        return min(spacings)
+        return 1/min(spacings)
 
 
 def num_repeated_allied_team(team: int, match_schedule: List[Match]) -> float:
