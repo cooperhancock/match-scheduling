@@ -10,14 +10,13 @@ import functools
 import math
 import random
 
-def simulated_annealing(team_numbers: List[int], num_matches_per_team: int = 8) -> MatchSchedule:
+def simulated_annealing(team_numbers: List[int], num_matches_per_team: int = 8, decay: float =0.9, weights: List[float] =[100.0, 5.0, 5.0, 5.0, 5.0], file: str = 'output.txt') -> MatchSchedule:
     temperature = 100.0  # TODO: figure out starting value
-    decay = 0.999
     iterations = 20_000
 
-    cost: Callable[[MatchSchedule], float] = functools.partial(cost_based_on_num_matches, ideal_num_matches=num_matches_per_team)
+    cost: Callable[[MatchSchedule], float] = functools.partial(cost_based_on_num_matches, ideal_num_matches=num_matches_per_team, weights=weights)
 
-
+    costs: List[float] = []
     # Step 1: Generate an initial schedule
     # Step 2: iterate
 
@@ -25,6 +24,7 @@ def simulated_annealing(team_numbers: List[int], num_matches_per_team: int = 8) 
     current_schedule = generate_even_spaced_schedule(team_numbers, num_matches_per_team)
     print(current_schedule.format_pretty())
     current_cost = cost(current_schedule)
+    print(f"initial cost: {current_cost} - temp: {temperature} - num matches in schedule {len(current_schedule.matches)}")
 
     try:
         for i in range(iterations):
@@ -54,6 +54,7 @@ def simulated_annealing(team_numbers: List[int], num_matches_per_team: int = 8) 
 
             if i % 10 == 0:
                 print(f"i {i} - time: {end - start} - cost: {current_cost} - temp: {temperature} - num matches in schedule {len(current_schedule.matches)}")
+                costs.append(current_cost)
     except KeyboardInterrupt:
         print(current_schedule.format_pretty())
         for team in current_schedule.teams:
@@ -61,5 +62,16 @@ def simulated_annealing(team_numbers: List[int], num_matches_per_team: int = 8) 
             spacings = [snd - fst for fst, snd in zip(match_numbers[:-1], match_numbers[1:])]
             print('team', team, ':', sorted(spacings))
         raise
+
+    with open(file, 'a') as f:
+        f.write('decay: ' + str(decay) + ' weight: ' + str(weights[0]) + ' cost delta: ' + str(max(costs)-min(costs)) + '\n')
+        for c in costs:
+            f.write(str(c) + '\n')
+        f.write(current_schedule.format_pretty() + '\n')
+        for team in current_schedule.teams:
+            match_numbers = [i for i, match in enumerate(current_schedule.matches) if team in match]
+            spacings = [snd - fst for fst, snd in zip(match_numbers[:-1], match_numbers[1:])]
+            f.write('team '+ str(team) + ': '+ str(sorted(spacings)) + '\n')
+        f.write('\n')
 
     return current_schedule
